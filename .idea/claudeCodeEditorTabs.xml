@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="b3ba8037-e8b0-4184-bc6e-b5332c933941" />
+    <option name="openSessionIds">
+      <list>
+        <option value="db39f02a-8e63-4532-ba13-fe2c547647d3" />
+        <option value="73edb327-f73a-42ed-86c3-6e88c7204cff" />
+        <option value="b3ba8037-e8b0-4184-bc6e-b5332c933941" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="73edb327-f73a-42ed-86c3-6e88c7204cff" value="/sessions/new" />
+        <entry key="b3ba8037-e8b0-4184-bc6e-b5332c933941" value="/sessions/a702e6d9-9912-4c6e-a7f5-8e77f12297ac" />
+        <entry key="db39f02a-8e63-4532-ba13-fe2c547647d3" value="/sessions/f9ccdfaa-badb-4e21-9463-997c3894ec85" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="73edb327-f73a-42ed-86c3-6e88c7204cff" value="Claude Code" />
+        <entry key="b3ba8037-e8b0-4184-bc6e-b5332c933941" value="agrega esto: styles.css css .root-pane { -fx-" />
+        <entry key="db39f02a-8e63-4532-ba13-fe2c547647d3" value="Configura este proyecto como una aplicación JavaFX" />
+      </map>
+    </option>
+  </component>
+</project>

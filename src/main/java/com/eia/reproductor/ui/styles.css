@@ -1,0 +1,161 @@
+.root-pane {
+    -fx-background-color: #0A090B;
+}
+
+.sidebar {
+    -fx-background-color: #110E10;
+}
+
+.main-area {
+    -fx-background-color: transparent;
+}
+
+.titulo-app {
+    -fx-text-fill: #F2F0F3;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.texto-muted {
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 12px;
+}
+
+.texto-muted-grande {
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 15px;
+}
+
+.texto-acento {
+    -fx-text-fill: #D32935;
+    -fx-font-size: 13px;
+}
+
+.titulo-cancion {
+    -fx-text-fill: #F2F0F3;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.buscador {
+    -fx-background-color: #211820;
+    -fx-background-radius: 10;
+    -fx-text-fill: #F2F0F3;
+    -fx-prompt-text-fill: #9E8F94;
+    -fx-padding: 11 14;
+}
+
+.chip-filtro, .chip-modo {
+    -fx-background-color: #211820;
+    -fx-background-radius: 20;
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 12px;
+    -fx-padding: 7 12;
+    -fx-cursor: hand;
+}
+
+.chip-modo {
+    -fx-font-size: 13px;
+    -fx-padding: 9 18;
+}
+
+.chip-filtro:selected, .chip-modo:selected {
+    -fx-background-color: #D32935;
+    -fx-text-fill: white;
+}
+
+.lista-canciones {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.lista-canciones .list-cell {
+    -fx-background-color: rgba(33, 24, 32, 0.5);
+    -fx-background-radius: 8;
+    -fx-text-fill: #D8D4D8;
+    -fx-padding: 10 12;
+}
+
+.lista-canciones .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.lista-canciones .list-cell:selected {
+    -fx-background-color: rgba(211, 41, 53, 0.18);
+    -fx-border-color: #D32935;
+    -fx-border-radius: 8;
+    -fx-text-fill: #F2F0F3;
+}
+
+.btn-primario {
+    -fx-background-color: #D32935;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-padding: 10 0;
+    -fx-cursor: hand;
+}
+
+.btn-secundario {
+    -fx-background-color: #211820;
+    -fx-background-radius: 8;
+    -fx-text-fill: #D8D4D8;
+    -fx-padding: 10 0;
+    -fx-cursor: hand;
+}
+
+.portada {
+    -fx-background-color: linear-gradient(to bottom right, #D32935, #1C0609);
+    -fx-background-radius: 18;
+    -fx-border-color: #D32935;
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(211, 41, 53, 0.35), 48, 0.1, 0, 0);
+}
+
+.portada-glifo {
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-font-size: 64px;
+}
+
+.emblema {
+    -fx-background-color: #0E080A;
+    -fx-background-radius: 26;
+    -fx-border-color: #D32935;
+    -fx-border-radius: 26;
+    -fx-border-width: 1.5;
+}
+
+.emblema-abanico {
+    -fx-fill: #D32935;
+}
+
+.progreso {
+    -fx-accent: #D32935;
+}
+
+.progreso .track {
+    -fx-background-color: #211820;
+    -fx-background-radius: 3;
+}
+
+.progreso .bar {
+    -fx-background-radius: 3;
+    -fx-padding: 3;
+}
+
+.ctrl {
+    -fx-background-color: #211820;
+    -fx-background-radius: 50;
+    -fx-text-fill: #D8D4D8;
+    -fx-min-width: 52; -fx-min-height: 52;
+    -fx-cursor: hand;
+}
+
+.ctrl-primario {
+    -fx-background-color: #D32935;
+    -fx-background-radius: 50;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-min-width: 68; -fx-min-height: 68;
+    -fx-cursor: hand;
+}
