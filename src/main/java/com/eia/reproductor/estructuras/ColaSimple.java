@@ -33,6 +33,23 @@ public class ColaSimple<T> {
         return frente == null ? null : frente.getDato();
     }
 
+    public boolean eliminar(T dato) {
+        NodoSimple<T> cursor = frente;
+        NodoSimple<T> anterior = null;
+        while (cursor != null) {
+            if (cursor.getDato().equals(dato)) {
+                if (anterior == null) frente = cursor.getSiguiente();
+                else anterior.setSiguiente(cursor.getSiguiente());
+                if (cursor == fin) fin = anterior;
+                tamanio--;
+                return true;
+            }
+            anterior = cursor;
+            cursor = cursor.getSiguiente();
+        }
+        return false;
+    }
+
     public List<T> aLista() {
         List<T> resultado = new ArrayList<>();
         NodoSimple<T> cursor = frente;

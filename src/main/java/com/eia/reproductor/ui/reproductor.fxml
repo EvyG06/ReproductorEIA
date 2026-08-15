@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.eia.reproductor.ui.ControlEstrellas?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.shape.SVGPath?>
 
 <HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -54,12 +56,22 @@
                 <SVGPath styleClass="emblema-abanico"
                          content="M 3 17 C 3 9.54 9.04 3.5 16.5 3.5 C 23.96 3.5 30 9.54 30 17 L 26 19 L 7 19 Z M 14.2 19 L 18.8 19 L 17.6 30 L 15.4 30 Z"/>
             </StackPane>
+            <HBox fx:id="ecualizador" spacing="3" alignment="BOTTOM_CENTER" maxHeight="20" maxWidth="40"
+                  StackPane.alignment="BOTTOM_CENTER" translateY="-14" visible="false" managed="false">
+                <Rectangle fx:id="barra1" width="4" height="8" arcWidth="2" arcHeight="2" styleClass="barra-ecualizador"/>
+                <Rectangle fx:id="barra2" width="4" height="14" arcWidth="2" arcHeight="2" styleClass="barra-ecualizador"/>
+                <Rectangle fx:id="barra3" width="4" height="10" arcWidth="2" arcHeight="2" styleClass="barra-ecualizador"/>
+                <Rectangle fx:id="barra4" width="4" height="16" arcWidth="2" arcHeight="2" styleClass="barra-ecualizador"/>
+            </HBox>
         </StackPane>
 
         <VBox alignment="CENTER" spacing="6">
             <Label fx:id="lblNombre" text="Sin reproducción" styleClass="titulo-cancion"/>
             <Label fx:id="lblMeta" text="Agrega canciones para comenzar" styleClass="texto-muted-grande"/>
-            <Label fx:id="lblCalificacion" text="" styleClass="texto-acento"/>
+            <HBox alignment="CENTER" spacing="10">
+                <ControlEstrellas fx:id="estrellasPanel" visible="false" managed="false"/>
+                <Label fx:id="lblCalificacion" text="" styleClass="texto-acento"/>
+            </HBox>
         </VBox>
 
         <VBox spacing="6" maxWidth="560">

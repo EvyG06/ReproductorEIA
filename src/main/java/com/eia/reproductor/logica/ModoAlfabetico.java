@@ -27,6 +27,44 @@ public class ModoAlfabetico implements ModoReproduccion {
     }
 
     @Override
+    public void agregar(Cancion c) {
+        arbol.insertar(c);
+        recalcularManteniendoPosicion(actual());
+    }
+
+    @Override
+    public void eliminar(Cancion c) {
+        Cancion previa = actual();
+        boolean eraLaActual = c.equals(previa);
+        int indicePrevio = indice;
+        arbol.eliminar(c);
+        if (eraLaActual) {
+            recorrido = arbol.recorridoInorden();
+            indice = recorrido.isEmpty() ? -1 : Math.min(indicePrevio, recorrido.size() - 1);
+        } else {
+            recalcularManteniendoPosicion(previa);
+        }
+    }
+
+    @Override
+    public void actualizar(List<Cancion> canciones, Cancion c) {
+        // El nombre/artista pudo cambiar y romper el orden del árbol: se reconstruye
+        // por completo y se reubica la posición por referencia (no por clave), sobre
+        // la canción que estaba sonando antes (no necesariamente la editada).
+        Cancion previa = actual();
+        arbol.vaciar();
+        for (Cancion cancion : canciones) {
+            arbol.insertar(cancion);
+        }
+        recalcularManteniendoPosicion(previa);
+    }
+
+    private void recalcularManteniendoPosicion(Cancion cancionActual) {
+        recorrido = arbol.recorridoInorden();
+        indice = cancionActual == null ? -1 : recorrido.indexOf(cancionActual);
+    }
+
+    @Override
     public Cancion siguiente() {
         if (recorrido == null || recorrido.isEmpty()) return null;
         indice = (indice + 1) % recorrido.size();

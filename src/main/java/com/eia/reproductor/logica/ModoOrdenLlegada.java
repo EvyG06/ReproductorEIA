@@ -20,6 +20,22 @@ public class ModoOrdenLlegada implements ModoReproduccion {
     }
 
     @Override
+    public void agregar(Cancion c) {
+        cola.encolar(c);
+    }
+
+    @Override
+    public void eliminar(Cancion c) {
+        cola.eliminar(c);
+        if (c.equals(enReproduccion)) enReproduccion = null;
+    }
+
+    @Override
+    public void actualizar(List<Cancion> canciones, Cancion c) {
+        // El orden FIFO no depende del contenido de la canción.
+    }
+
+    @Override
     public Cancion siguiente() {
         enReproduccion = cola.desencolar();
         return enReproduccion;

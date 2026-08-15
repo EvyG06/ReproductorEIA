@@ -24,21 +24,21 @@ public class Reproductor {
 
     public void agregarCancion(Cancion c) {
         biblioteca.add(c);
-        modoActivo.cargar(biblioteca);
+        modoActivo.agregar(c);
         persistencia.guardar(biblioteca);
     }
 
     public boolean eliminarCancion(Cancion c) {
         boolean eliminada = biblioteca.remove(c);
         if (eliminada) {
-            modoActivo.cargar(biblioteca);
+            modoActivo.eliminar(c);
             persistencia.guardar(biblioteca);
         }
         return eliminada;
     }
 
-    public void notificarEdicion() {
-        modoActivo.cargar(biblioteca);
+    public void notificarEdicion(Cancion editada) {
+        modoActivo.actualizar(biblioteca, editada);
         persistencia.guardar(biblioteca);
     }
 

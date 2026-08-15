@@ -1,27 +1,38 @@
 package com.eia.reproductor.ui;
 
 import com.eia.reproductor.logica.*;
+import com.eia.reproductor.metadatos.InfoAudio;
+import com.eia.reproductor.metadatos.LectorMetadatos;
 import com.eia.reproductor.modelo.Cancion;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 public class ReproductorController {
+
+    private static final PseudoClass SONANDO = PseudoClass.getPseudoClass("sonando");
 
     @FXML private Label lblContador;
     @FXML private TextField txtBuscar;
@@ -29,16 +40,23 @@ public class ReproductorController {
     @FXML private ListView<Cancion> listaCanciones;
     @FXML private ToggleButton modoAleatorio, modoLlegada, modoAlfabetico;
     @FXML private Label lblNombre, lblMeta, lblCalificacion;
+    @FXML private ControlEstrellas estrellasPanel;
     @FXML private ProgressBar barraProgreso;
     @FXML private Label lblTiempoActual, lblTiempoTotal;
-    @FXML private Button btnAnterior;
+    @FXML private Button btnAnterior, btnReproducir, btnPausar;
     @FXML private ImageView imgPortada;
     @FXML private Label lblPortadaFallback;
+    @FXML private HBox ecualizador;
+    @FXML private Rectangle barra1, barra2, barra3, barra4;
 
     private final Reproductor reproductor = new Reproductor();
     private final ServicioAudio audio = new ServicioAudio();
+    private final LectorMetadatos lectorMetadatos = new LectorMetadatos();
     private Timeline timeline;
+    private Timeline animacionEcualizador;
+    private Rectangle[] barrasEcualizador;
     private int segundosTranscurridos;
+    private boolean reproduciendo;
 
     @FXML
     public void initialize() {
@@ -66,12 +84,18 @@ public class ReproductorController {
             @Override
             protected void updateItem(Cancion c, boolean vacio) {
                 super.updateItem(c, vacio);
-                if (vacio || c == null) { setGraphic(null); setText(null); return; }
+                if (vacio || c == null) {
+                    setGraphic(null);
+                    setText(null);
+                    pseudoClassStateChanged(SONANDO, false);
+                    return;
+                }
                 Label nombre = new Label((c.isFavorita() ? "♥ " : "") + c.getNombre());
                 nombre.setStyle("-fx-text-fill: #F2F0F3; -fx-font-size: 14px;");
                 Label artista = new Label(c.getArtista() + " · " + c.getDuracionFormateada());
                 artista.setStyle("-fx-text-fill: #9E8F94; -fx-font-size: 12px;");
                 setGraphic(new VBox(2, nombre, artista));
+                pseudoClassStateChanged(SONANDO, c.equals(reproductor.getModoActivo().actual()));
             }
         });
 
@@ -83,23 +107,55 @@ public class ReproductorController {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> tickProgreso()));
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        refrescarLista();
-        actualizarPanelCancion(null);
+        barrasEcualizador = new Rectangle[] {barra1, barra2, barra3, barra4};
+        animacionEcualizador = new Timeline(new KeyFrame(Duration.millis(160), e -> animarEcualizador()));
+        animacionEcualizador.setCycleCount(Timeline.INDEFINITE);
+
+        estrellasPanel.setOnCambio(this::onCalificarDesdePanel);
+
+        cambiarModoSegunToggle();
     }
 
+    private void animarEcualizador() {
+        for (Rectangle barra : barrasEcualizador) {
+            barra.setHeight(6 + Math.random() * 14);
+        }
+    }
+
+    private void onCalificarDesdePanel(int calificacion) {
+        Cancion actual = reproductor.getModoActivo().actual();
+        if (actual == null) return;
+        actual.setCalificacion(calificacion);
+        reproductor.notificarEdicion(actual);
+        lblCalificacion.setText("Calificación  " + actual.getCalificacion() + "/100"
+                + (actual.isFavorita() ? "  ♥" : ""));
+        listaCanciones.refresh();
+    }
+
+    /**
+     * Se usa un event filter en vez de {@code scene.getAccelerators()} porque los
+     * accelerators pueden perder la carrera contra el manejo propio de teclas de
+     * TextField/ListView (p. ej. Ctrl+Flechas) cuando esos controles tienen el foco.
+     * Un filter corre en la fase de captura, antes de que el nodo con foco reciba
+     * el evento, así que el atajo siempre gana.
+     */
     public void configurarAtajos(Scene scene) {
-        scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN), this::onReproducir);
-        scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN), this::onPausar);
-        scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN), this::onSiguiente);
-        scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN), () -> {
-                    if (!btnAnterior.isDisabled()) onAnterior();
-                });
-        scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN), this::onAgregar);
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, this::manejarAtajo);
+    }
+
+    private void manejarAtajo(KeyEvent evento) {
+        if (!evento.isControlDown()) return;
+        switch (evento.getCode()) {
+            case R -> { onReproducir(); evento.consume(); }
+            case P -> { onPausar(); evento.consume(); }
+            case RIGHT -> { onSiguiente(); evento.consume(); }
+            case LEFT -> {
+                if (!btnAnterior.isDisabled()) onAnterior();
+                evento.consume();
+            }
+            case N -> { onAgregar(); evento.consume(); }
+            default -> { }
+        }
     }
 
     // ---------- Modos ----------
@@ -113,6 +169,7 @@ public class ReproductorController {
         btnAnterior.setDisable(!reproductor.getModoActivo().permiteRetroceder());
         actualizarPanelCancion(null);
         refrescarLista();
+        actualizarEstadoReproduccion();
     }
 
     // ---------- Reproducción ----------
@@ -123,8 +180,9 @@ public class ReproductorController {
         segundosTranscurridos = 0;
         barraProgreso.setProgress(0);
         lblTiempoActual.setText("0:00");
+        reproduciendo = false;
         actualizarPanelCancion(c);
-        if (c == null) return;
+        if (c == null) { actualizarEstadoReproduccion(); return; }
         boolean audioReal = audio.cargar(c.getRutaArchivo(),
                 this::onSiguiente,
                 progreso -> {
@@ -133,6 +191,8 @@ public class ReproductorController {
                 });
         if (audioReal) audio.reproducir();
         else timeline.play();
+        reproduciendo = true;
+        actualizarEstadoReproduccion();
     }
 
     @FXML
@@ -140,15 +200,42 @@ public class ReproductorController {
         Cancion actual = reproductor.getModoActivo().actual();
         if (actual == null) actual = reproductor.getModoActivo().siguiente();
         if (actual == null) { actualizarPanelCancion(null); return; }
-        if (audio.activo()) audio.reproducir();
-        else if (segundosTranscurridos > 0) timeline.play();
-        else reproducirCancion(actual);
+        if (audio.activo()) {
+            audio.reproducir();
+            reproduciendo = true;
+            actualizarEstadoReproduccion();
+        } else if (segundosTranscurridos > 0) {
+            timeline.play();
+            reproduciendo = true;
+            actualizarEstadoReproduccion();
+        } else {
+            reproducirCancion(actual);
+        }
     }
 
     @FXML
     private void onPausar() {
         audio.pausar();
         timeline.pause();
+        reproduciendo = false;
+        actualizarEstadoReproduccion();
+    }
+
+    /** Refleja en la UI si algo está sonando: resalta y hace scroll a la canción activa
+     * en la lista, habilita/deshabilita Reproducir/Pausar y anima el ecualizador. */
+    private void actualizarEstadoReproduccion() {
+        btnReproducir.setDisable(reproduciendo);
+        btnPausar.setDisable(!reproduciendo);
+
+        ecualizador.setVisible(reproduciendo);
+        ecualizador.setManaged(reproduciendo);
+        if (reproduciendo) animacionEcualizador.play();
+        else animacionEcualizador.stop();
+
+        Cancion sonando = reproductor.getModoActivo().actual();
+        listaCanciones.getSelectionModel().select(sonando);
+        if (sonando != null) listaCanciones.scrollTo(sonando);
+        listaCanciones.refresh();
     }
 
     @FXML
@@ -181,6 +268,8 @@ public class ReproductorController {
         segundosTranscurridos = 0;
         barraProgreso.setProgress(0);
         lblTiempoActual.setText("0:00");
+        reproduciendo = false;
+        actualizarEstadoReproduccion();
     }
 
     private String formatear(int segundos) {
@@ -217,8 +306,9 @@ public class ReproductorController {
         Cancion sel = listaCanciones.getSelectionModel().getSelectedItem();
         if (sel == null) { alerta("Selecciona una canción de la lista."); return; }
         dialogoCancion(sel).ifPresent(editada -> {
-            reproductor.notificarEdicion();
+            reproductor.notificarEdicion(editada);
             refrescarLista();
+            actualizarPanelCancion(reproductor.getModoActivo().actual());
         });
     }
 
@@ -251,8 +341,8 @@ public class ReproductorController {
         TextField duracion = new TextField(existente == null ? "" : String.valueOf(existente.getDuracionSegundos()));
         TextField genero = new TextField(existente == null ? "" : existente.getGenero());
         TextField anio = new TextField(existente == null ? "" : String.valueOf(existente.getAnioLanzamiento()));
-        Spinner<Integer> calificacion = new Spinner<>(0, 100,
-                existente == null ? 50 : existente.getCalificacion());
+        ControlEstrellas calificacion = new ControlEstrellas();
+        calificacion.setCalificacion(existente == null ? 50 : existente.getCalificacion());
         CheckBox favorita = new CheckBox("Favorita");
         if (existente != null) favorita.setSelected(existente.isFavorita());
 
@@ -262,14 +352,28 @@ public class ReproductorController {
         };
         Button btnAudio = new Button("Elegir MP3/WAV...");
         Label lblAudio = new Label(rutas[0] == null ? "Sin archivo" : new File(rutas[0]).getName());
+        Button btnPortada = new Button("Elegir portada...");
+        Label lblPort = new Label(rutas[1] == null ? "Sin imagen" : new File(rutas[1]).getName());
         btnAudio.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Audio", "*.mp3", "*.wav"));
             File f = fc.showOpenDialog(dialogo.getDialogPane().getScene().getWindow());
-            if (f != null) { rutas[0] = f.getAbsolutePath(); lblAudio.setText(f.getName()); }
+            if (f == null) return;
+            rutas[0] = f.getAbsolutePath();
+            lblAudio.setText(f.getName());
+
+            InfoAudio info = lectorMetadatos.leer(f);
+            if (nombre.getText().isBlank() && info.titulo() != null) nombre.setText(info.titulo());
+            if (artista.getText().isBlank() && info.artista() != null) artista.setText(info.artista());
+            if (album.getText().isBlank() && info.album() != null) album.setText(info.album());
+            if (genero.getText().isBlank() && info.genero() != null) genero.setText(info.genero());
+            if (anio.getText().isBlank() && info.anioLanzamiento() != null) anio.setText(String.valueOf(info.anioLanzamiento()));
+            if (duracion.getText().isBlank() && info.duracionSegundos() != null) duracion.setText(String.valueOf(info.duracionSegundos()));
+            if (rutas[1] == null && info.portada() != null) {
+                File portada = guardarPortadaEmbebida(info, f);
+                if (portada != null) { rutas[1] = portada.getAbsolutePath(); lblPort.setText(portada.getName()); }
+            }
         });
-        Button btnPortada = new Button("Elegir portada...");
-        Label lblPort = new Label(rutas[1] == null ? "Sin imagen" : new File(rutas[1]).getName());
         btnPortada.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Imagen", "*.png", "*.jpg", "*.jpeg"));
@@ -280,7 +384,7 @@ public class ReproductorController {
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
         String[] etiquetas = {"Nombre", "Artista", "Álbum", "Duración (seg)", "Género", "Año", "Calificación"};
-        Control[] campos = {nombre, artista, album, duracion, genero, anio, calificacion};
+        Node[] campos = {nombre, artista, album, duracion, genero, anio, calificacion};
         for (int i = 0; i < etiquetas.length; i++) {
             grid.add(new Label(etiquetas[i]), 0, i);
             grid.add(campos[i], 1, i);
@@ -309,7 +413,7 @@ public class ReproductorController {
                     c.setGenero(genero.getText().trim());
                     c.setAnioLanzamiento(an);
                 }
-                c.setCalificacion(calificacion.getValue());
+                c.setCalificacion(calificacion.getCalificacion());
                 c.setFavorita(favorita.isSelected());
                 c.setRutaArchivo(rutas[0]);
                 c.setRutaPortada(rutas[1]);
@@ -331,6 +435,8 @@ public class ReproductorController {
             lblTiempoTotal.setText("0:00");
             imgPortada.setImage(null);
             lblPortadaFallback.setVisible(true);
+            estrellasPanel.setVisible(false);
+            estrellasPanel.setManaged(false);
             return;
         }
         lblNombre.setText(c.getNombre());
@@ -339,6 +445,9 @@ public class ReproductorController {
         lblCalificacion.setText("Calificación  " + c.getCalificacion() + "/100"
                 + (c.isFavorita() ? "  ♥" : ""));
         lblTiempoTotal.setText(c.getDuracionFormateada());
+        estrellasPanel.setVisible(true);
+        estrellasPanel.setManaged(true);
+        estrellasPanel.setCalificacion(c.getCalificacion());
 
         if (c.getRutaPortada() != null && new File(c.getRutaPortada()).exists()) {
             imgPortada.setImage(new Image(new File(c.getRutaPortada()).toURI().toString(), 280, 280, true, true));
@@ -360,5 +469,20 @@ public class ReproductorController {
 
     private void alerta(String msg) {
         new Alert(Alert.AlertType.INFORMATION, msg).showAndWait();
+    }
+
+    /** Guarda la carátula embebida en el MP3 como archivo, para poder asignarla como portada. */
+    private File guardarPortadaEmbebida(InfoAudio info, File archivoAudio) {
+        try {
+            Path carpeta = Paths.get(System.getProperty("user.home"), ".reproductor-eia", "covers");
+            Files.createDirectories(carpeta);
+            String extension = info.portadaMimeType() != null && info.portadaMimeType().contains("png") ? "png" : "jpg";
+            String base = archivoAudio.getName().replaceAll("[^a-zA-Z0-9.-]", "_");
+            Path destino = carpeta.resolve(base + "." + extension);
+            Files.write(destino, info.portada());
+            return destino.toFile();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

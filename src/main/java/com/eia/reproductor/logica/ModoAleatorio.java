@@ -22,6 +22,21 @@ public class ModoAleatorio implements ModoReproduccion {
     }
 
     @Override
+    public void agregar(Cancion c) {
+        lista.insertarAlFinal(c);
+    }
+
+    @Override
+    public void eliminar(Cancion c) {
+        lista.eliminar(c);
+    }
+
+    @Override
+    public void actualizar(List<Cancion> canciones, Cancion c) {
+        // El orden aleatorio no depende del contenido de la canción.
+    }
+
+    @Override
     public Cancion siguiente() {
         return lista.avanzar();
     }

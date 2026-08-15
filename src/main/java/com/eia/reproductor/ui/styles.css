@@ -87,6 +87,29 @@
     -fx-text-fill: #F2F0F3;
 }
 
+.lista-canciones .list-cell:sonando {
+    -fx-background-color: rgba(211, 41, 53, 0.28);
+    -fx-border-color: #D32935;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
+.control-estrellas .estrella {
+    -fx-text-fill: #3A2E33;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+}
+
+.control-estrellas .estrella:llena {
+    -fx-text-fill: #D32935;
+}
+
+.barra-ecualizador {
+    -fx-fill: #F2F0F3;
+    -fx-arc-width: 2;
+    -fx-arc-height: 2;
+}
+
 .btn-primario {
     -fx-background-color: #D32935;
     -fx-background-radius: 8;
