@@ -4,22 +4,30 @@ import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
 import java.io.File;
 
 /**
  * Lee metadatos (título, artista, álbum, género, año, duración, carátula) directamente
- * del archivo de audio usando sus tags ID3, para no tener que digitarlos a mano.
- * Si el archivo no es MP3 o no trae tags, devuelve una {@link InfoAudio} vacía y el
- * usuario completa los campos manualmente, como antes.
+ * del archivo de audio, para no tener que digitarlos a mano. Los MP3 traen tags ID3
+ * (usando mp3agic); los WAV no tienen tags, así que solo se detecta la duración real
+ * a partir del header del archivo (usando javax.sound.sampled). Si el archivo no es
+ * MP3/WAV o falla la lectura, devuelve una {@link InfoAudio} vacía.
  */
 public class LectorMetadatos {
 
     private static final InfoAudio VACIA = new InfoAudio(null, null, null, null, null, null, null, null);
 
     public InfoAudio leer(File archivo) {
-        if (archivo == null || !archivo.getName().toLowerCase().endsWith(".mp3")) {
-            return VACIA;
-        }
+        if (archivo == null) return VACIA;
+        String nombre = archivo.getName().toLowerCase();
+        if (nombre.endsWith(".mp3")) return leerMp3(archivo);
+        if (nombre.endsWith(".wav")) return leerWav(archivo);
+        return VACIA;
+    }
+
+    private InfoAudio leerMp3(File archivo) {
         try {
             Mp3File mp3 = new Mp3File(archivo);
             Integer duracion = (int) mp3.getLengthInSeconds();
@@ -28,6 +36,19 @@ public class LectorMetadatos {
             } else if (mp3.hasId3v1Tag()) {
                 return desdeTag(mp3.getId3v1Tag(), duracion);
             }
+            return new InfoAudio(null, null, null, null, null, duracion, null, null);
+        } catch (Exception e) {
+            return VACIA;
+        }
+    }
+
+    private InfoAudio leerWav(File archivo) {
+        try {
+            AudioFileFormat formato = AudioSystem.getAudioFileFormat(archivo);
+            long frames = formato.getFrameLength();
+            float frameRate = formato.getFormat().getFrameRate();
+            if (frames <= 0 || frameRate <= 0) return VACIA;
+            int duracion = Math.round(frames / frameRate);
             return new InfoAudio(null, null, null, null, null, duracion, null, null);
         } catch (Exception e) {
             return VACIA;

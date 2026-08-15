@@ -4,6 +4,8 @@ import com.eia.reproductor.ui.ReproductorController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -25,6 +27,18 @@ public class App extends Application {
 
         ReproductorController controller = loader.getController();
         controller.configurarAtajos(scene);
+
+        scene.setOnDragOver(e -> {
+            if (e.getDragboard().hasFiles()) e.acceptTransferModes(TransferMode.COPY);
+            e.consume();
+        });
+        scene.setOnDragDropped(e -> {
+            Dragboard db = e.getDragboard();
+            boolean exito = db.hasFiles();
+            if (exito) controller.manejarArchivosSoltados(db.getFiles());
+            e.setDropCompleted(exito);
+            e.consume();
+        });
 
         stage.show();
     }

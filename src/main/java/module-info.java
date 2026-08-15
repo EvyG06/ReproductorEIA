@@ -3,6 +3,7 @@ module com.eia.reproductor {
     requires javafx.fxml;
     requires javafx.media;
     requires mp3agic;
+    requires java.desktop;
 
     exports com.eia.reproductor;
 

@@ -33,6 +33,12 @@ public class ServicioAudio {
     public void reproducir() { if (player != null) player.play(); }
     public void pausar()     { if (player != null) player.pause(); }
 
+    public void seek(double fraccion) {
+        if (player == null) return;
+        double total = player.getTotalDuration().toSeconds();
+        if (total > 0) player.seek(javafx.util.Duration.seconds(fraccion * total));
+    }
+
     public void detener() {
         if (player != null) {
             player.stop();
