@@ -1,0 +1,303 @@
+.root-pane {
+    -fx-background-color: #0A090B;
+}
+
+.sidebar {
+    -fx-background-color: #110E10;
+}
+
+.main-area {
+    -fx-background-color: transparent;
+}
+
+.titulo-app {
+    -fx-text-fill: #F2F0F3;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.texto-muted {
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 12px;
+}
+
+.texto-muted-grande {
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 15px;
+}
+
+.texto-acento {
+    -fx-text-fill: #D32935;
+    -fx-font-size: 13px;
+}
+
+.titulo-cancion {
+    -fx-text-fill: #F2F0F3;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.buscador {
+    -fx-background-color: #211820;
+    -fx-background-radius: 10;
+    -fx-text-fill: #F2F0F3;
+    -fx-prompt-text-fill: #9E8F94;
+    -fx-padding: 11 14;
+}
+
+.chip-filtro, .chip-modo {
+    -fx-background-color: #211820;
+    -fx-background-radius: 20;
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 12px;
+    -fx-padding: 7 12;
+    -fx-cursor: hand;
+}
+
+.chip-modo {
+    -fx-font-size: 13px;
+    -fx-padding: 9 18;
+}
+
+.chip-filtro:selected, .chip-modo:selected {
+    -fx-background-color: #D32935;
+    -fx-text-fill: white;
+}
+
+.lista-canciones {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.lista-canciones .list-cell {
+    -fx-background-color: rgba(33, 24, 32, 0.5);
+    -fx-background-radius: 8;
+    -fx-text-fill: #D8D4D8;
+    -fx-padding: 10 12;
+}
+
+.lista-canciones .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.lista-canciones .list-cell:selected {
+    -fx-background-color: rgba(211, 41, 53, 0.18);
+    -fx-border-color: #D32935;
+    -fx-border-radius: 8;
+    -fx-text-fill: #F2F0F3;
+}
+
+.lista-canciones .list-cell:sonando {
+    -fx-background-color: rgba(211, 41, 53, 0.28);
+    -fx-border-color: #D32935;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
+.control-estrellas .estrella {
+    -fx-text-fill: #3A2E33;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+}
+
+.control-estrellas .estrella:llena {
+    -fx-text-fill: #D32935;
+}
+
+.barra-ecualizador {
+    -fx-fill: #F2F0F3;
+    -fx-arc-width: 2;
+    -fx-arc-height: 2;
+}
+
+.btn-primario {
+    -fx-background-color: #D32935;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-padding: 10 0;
+    -fx-cursor: hand;
+}
+
+.btn-secundario {
+    -fx-background-color: #211820;
+    -fx-background-radius: 8;
+    -fx-text-fill: #D8D4D8;
+    -fx-padding: 10 0;
+    -fx-cursor: hand;
+}
+
+.portada {
+    -fx-background-color: linear-gradient(to bottom right, #D32935, #1C0609);
+    -fx-background-radius: 18;
+    -fx-border-color: #D32935;
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(211, 41, 53, 0.35), 48, 0.1, 0, 0);
+}
+
+.portada-glifo {
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-font-size: 64px;
+}
+
+.emblema {
+    -fx-background-color: #0E080A;
+    -fx-background-radius: 26;
+    -fx-border-color: #D32935;
+    -fx-border-radius: 26;
+    -fx-border-width: 1.5;
+}
+
+.emblema-abanico {
+    -fx-fill: #D32935;
+}
+
+.progreso {
+    -fx-accent: #D32935;
+}
+
+.progreso .track {
+    -fx-background-color: #211820;
+    -fx-background-radius: 3;
+}
+
+.progreso .bar {
+    -fx-background-color: linear-gradient(to right, #D32935, #FF4B57);
+    -fx-background-radius: 3;
+    -fx-padding: 3.5;
+}
+
+.slider-progreso .track {
+    -fx-background-color: transparent;
+}
+
+.slider-progreso .axis {
+    -fx-tick-label-fill: transparent;
+}
+
+.slider-progreso .thumb {
+    -fx-background-color: #F2F0F3;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 13px;
+    -fx-pref-height: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(211, 41, 53, 0.65), 10, 0.3, 0, 0);
+    -fx-cursor: hand;
+}
+
+.slider-progreso:hover .thumb {
+    -fx-scale-x: 1.25;
+    -fx-scale-y: 1.25;
+}
+
+.ctrl {
+    -fx-background-color: #211820;
+    -fx-background-radius: 50;
+    -fx-text-fill: #D8D4D8;
+    -fx-min-width: 52; -fx-min-height: 52;
+    -fx-cursor: hand;
+}
+
+.ctrl-primario {
+    -fx-background-color: #D32935;
+    -fx-background-radius: 50;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-min-width: 68; -fx-min-height: 68;
+    -fx-cursor: hand;
+}
+
+.btn-historial {
+    -fx-background-color: #211820;
+    -fx-background-radius: 20;
+    -fx-text-fill: #D8D4D8;
+    -fx-font-size: 11px;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.fondo-oscurecedor {
+    -fx-background-color: rgba(10, 9, 11, 0.72);
+}
+
+.vinilo-disco {
+    -fx-fill: #17110F;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.2, 0, 0);
+}
+
+.vinilo-surco {
+    -fx-fill: transparent;
+    -fx-stroke: rgba(255, 255, 255, 0.07);
+    -fx-stroke-width: 1;
+}
+
+.vinilo-centro {
+    -fx-fill: #D32935;
+}
+
+.vinilo-reflejo {
+    -fx-fill: rgba(255, 255, 255, 0.55);
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.4), 6, 0.3, 0, 0);
+}
+
+.panel-historial {
+    -fx-background-color: #150F13;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 30, 0.2, -6, 0);
+    -fx-border-color: rgba(211, 41, 53, 0.25);
+    -fx-border-width: 0 0 0 1;
+}
+
+.titulo-panel {
+    -fx-text-fill: #F2F0F3;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.btn-cerrar-panel {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.lista-historial {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.lista-historial .list-cell {
+    -fx-background-color: rgba(33, 24, 32, 0.4);
+    -fx-background-radius: 6;
+    -fx-text-fill: #D8D4D8;
+    -fx-padding: 8 10;
+}
+
+.lista-historial .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.stat-linea {
+    -fx-text-fill: #D8D4D8;
+    -fx-font-size: 13px;
+}
+
+.stat-titulo {
+    -fx-text-fill: #9E8F94;
+    -fx-font-size: 11px;
+}
+
+.genero-barra-fondo {
+    -fx-fill: #211820;
+}
+
+.genero-barra {
+    -fx-fill: #D32935;
+}
+
+.toast {
+    -fx-background-color: rgba(33, 24, 32, 0.95);
+    -fx-background-radius: 20;
+    -fx-text-fill: #F2F0F3;
+    -fx-padding: 10 20;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 16, 0.2, 0, 4);
+}
