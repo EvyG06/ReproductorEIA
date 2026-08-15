@@ -2,7 +2,6 @@
 
 Reproductor musical de escritorio en Java + JavaFX donde cada modo de reproducción está respaldado por una estructura de datos distinta, implementada desde cero. Trabajo 1 de la asignatura Lenguajes y Compiladores, Universidad EIA.
 
-El objetivo del proyecto no es el reproductor en sí, sino demostrar cómo la elección de la estructura de datos determina el comportamiento observable del sistema.
 
 ## Modos de reproducción
 
@@ -64,12 +63,7 @@ mvn javafx:run
 ```
 
 
-## Capturas
-
-<!-- Reemplaza con tus capturas
-![Vista general](docs/captura-general.png)
-![Modo alfabético](docs/captura-alfabetico.png)
--->
+##Sebas la puse en master jeje
 
 ## Autora
 
